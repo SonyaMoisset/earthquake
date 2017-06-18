@@ -13,6 +13,8 @@ import java.util.List;
 
 public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
+    private static final String LOCATION_SEPARATOR = " of ";
+
     public EarthquakeAdapter(Context context, List<Earthquake> earthquakes) {
         super(context, 0, earthquakes);
     }
@@ -42,8 +44,24 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         TextView magnitudeView = (TextView) listItemView.findViewById(R.id.magnitude);
         magnitudeView.setText(currentEarthquake.getMagnitude());
 
-        TextView locationView = (TextView) listItemView.findViewById(R.id.location);
-        locationView.setText(currentEarthquake.getLocation());
+        String originalLocation = currentEarthquake.getLocation();
+        String primaryLocation;
+        String locationOffset;
+
+        if (originalLocation.contains(LOCATION_SEPARATOR)) {
+            String[] parts = originalLocation.split(LOCATION_SEPARATOR);
+            locationOffset = parts[0] + LOCATION_SEPARATOR;
+            primaryLocation = parts[1];
+        } else {
+            locationOffset = getContext().getString(R.string.near_the);
+            primaryLocation = originalLocation;
+        }
+
+        TextView locationOffsetView = (TextView) listItemView.findViewById(R.id.location_offset);
+        locationOffsetView.setText(locationOffset);
+
+        TextView primaryLocationView = (TextView) listItemView.findViewById(R.id.primary_location);
+        primaryLocationView.setText(primaryLocation);
 
         Date dateObject = new Date(currentEarthquake.getTimeInMilliseconds());
 
